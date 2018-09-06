@@ -1,0 +1,106 @@
+#!/bin/bash
+
+usage () {
+cat << EOF
+
+Usage: %TARGET% run [--lustre] [--ports] [--ipc=host] [--net=host] [-t] IMAGE
+  --lustre     mounts /scratch (also turns on --net=host)
+  --ports      adds docker options -p8888:8888 -p5901:5901 ... -p5909:5909 -p6006:6006
+  --ipc=host   adds docker option  --ipc=host
+  --net=host   adds docker option  --net=host
+  -t           adds docker option  -t
+  -h           display this help and exit
+  --help       display this help and exit
+  --usage      display this help and exit
+
+The following options are added to the docker command by default:
+	-u \$UID:\$GID --group-add \$GIDS –v /home:/home --rm –i --ulimit memlock=-1 --ulimit stack=67108864
+If --ipc=host is not specified then the following option is also added:
+	--shm-size=1g
+
+EOF
+}
+
+libexec=%LIBEXEC%
+
+lustre=0
+ports=0
+ipc_host=0
+net_host=0
+t=0
+for i in `seq 1 $#` ; do
+ if [ x"$1" == x"--lustre" ] ; then lustre=1 ; shift ; fi
+ if [ x"$1" == x"--ipc=host" ] ; then ipc_host=1 ; shift ; fi
+ if [ x"$1" == x"--ports" ] ; then ports=1 ; shift ; fi
+ if [ x"$1" == x"--net=host" ] ; then net_host=1 ; shift ; fi
+ if [ x"$1" == x"-t" ] ; then t=1 ; shift ; fi
+ #
+ if [ x"$1" == x"-h" ] ; then usage ; exit ; fi
+ if [ x"$1" == x"--help" ] ; then usage ; exit ; fi
+ if [ x"$1" == x"--usage" ] ; then usage ; exit ; fi
+done
+
+if [ $# -ne 1 ] ; then echo ERROR: cannot parse command line ; usage ; exit 1 ; fi
+IMAGE=$1
+
+_x=`$libexec/docker.images | awk '{printf "%s:%s\n",$1,$2}' | grep "^${IMAGE}\$"`
+if [ x"$_x" != x"$IMAGE" ] ; then echo ERROR: image not found in repository: $IMAGE ; usage ; exit 1 ; fi
+
+SUFFIX=""
+if [ $lustre -eq 1 ] ; then SUFFIX="${SUFFIX}.lustre" ; fi
+if [ $ipc_host -eq 1 ] ; then SUFFIX="${SUFFIX}.ipc_host" ; fi
+if [ $ports -eq 1 ] ; then SUFFIX="${SUFFIX}.ports" ; fi
+if [ $net_host -eq 1 ] ; then SUFFIX="${SUFFIX}.net_host" ; fi
+if [ $t -eq 1 ] ; then SUFFIX="${SUFFIX}.tty" ; fi
+
+_cgroup="$PBS_JOBID"
+if [ x"$_cgroup" == x ] ; then _cgroup=$(grep "$$" /sys/fs/cgroup/devices/*/tasks | awk -F / '{printf "%s",$6}')  ; fi
+if [ x"$_cgroup" == x ] ; then _cgroup="Interactive"  ; fi
+
+CONTAINER="${USER}-${_cgroup}-`date +%Y%m%d%H%M%S%N`-${RANDOM}"
+if [ $lustre -eq 0 ] ; then
+ exec $libexec/nvidia-docker.run$SUFFIX $IMAGE $CONTAINER
+else
+
+VOLUME="DDN-Lustre-vol"
+CONTAINERL1="${CONTAINER}-L1"
+CONTAINERL2="${CONTAINER}-L2"
+
+lustre_containers() {
+  cont_pid=""
+  ((i=0))
+  sleep 8
+  while [ -z "$cont_pid" ] ; do
+   ((i=i+1))
+   if [ $i -eq 10 ] ; then return 1 ; fi
+   sleep 2
+   # docker inspect -f '{{.State.Pid}}' $CONTAINER
+   cont_pid=$($libexec/docker.inspect.pid $CONTAINER 2>/dev/null)
+  done
+
+ # docker run --rm --privileged --pid=host -v $VOLUME:/ddn --entrypoint=/ddn/scripts/nsenter.sh $IMAGE $cont_pid /ddn/scripts/init_lustre.sh $lnet $mgs $fs $mount_point $network
+ # docker run --rm --privileged --pid=host -v DDN-Lustre-vol:/ddn --entrypoint=/ddn/scripts/nsenter.sh $IMAGE $cont_pid /ddn/scripts/init_lustre.sh o2ib0(ib1),o2ib1(ib1) 192.168.156.29@o2ib,192.168.156.30@o2ib scratch /scratch -
+ $libexec/nvidia-docker.run.lustre.init $IMAGE $CONTAINERL1 $cont_pid
+
+ sleep 5
+ # docker run --rm --privileged --pid=host -v $VOLUME:/ddn --entrypoint=/ddn/scripts/nsenter.sh $IMAGE $cont_pid /ddn/scripts/finish_lustre_when_done.sh
+ # docker run --rm --privileged --pid=host -v DDN-Lustre-vol:/ddn --entrypoint=/ddn/scripts/nsenter.sh $IMAGE $cont_pid /ddn/scripts/finish_lustre_when_done.sh
+ $libexec/nvidia-docker.run.lustre.finish $IMAGE $CONTAINERL2 $cont_pid
+}
+
+ENTRYPOINT=$($libexec/docker.inspect.entrypoint $IMAGE 2>/dev/null)
+ENTRYPOINT=${ENTRYPOINT//[[\],\!]}
+CMD=$($libexec/docker.inspect.cmd $IMAGE 2>/dev/null)
+CMD=${CMD//[[\],\!]}
+ENTRYPOINT="$ENTRYPOINT $CMD"
+ENTRYPOINT="${ENTRYPOINT# }"
+ENTRYPOINT="${ENTRYPOINT% }"
+
+lustre_containers &
+# nvidia-docker run $DOCKER_OPTS $IMAGE $ENTRYPOINT_ACTION $CMD_ACTION $JO
+# nvidia-docker run ... -u $UID:$GID --group-add 41000001 -v /home:/home --rm -i ... -v DDN-Lustre-vol:/ddn --entrypoint=/ddn/scripts/entry_lustre.sh --net=host --name=$CONTAINER $IMAGE /usr/local/bin/nvidia_entrypoint.sh
+$libexec/nvidia-docker.run$SUFFIX $IMAGE $CONTAINER $ENTRYPOINT
+jobs
+wait
+
+fi #lustre=1

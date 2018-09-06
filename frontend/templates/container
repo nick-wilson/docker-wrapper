@@ -1,0 +1,32 @@
+#!/bin/bash
+
+usage () {
+cat << EOF
+
+Usage: $0 COMMAND
+
+A front-end to the Docker command.
+Sets site-specific options and then calls relevant Docker command.
+Only a subset of functionality is currently implemented.
+
+Commands:
+  images      List images
+  ps          List containers
+  rm          Remove one or more containers
+  run         Run a command in a new container
+  stop        Stop one or more running containers
+
+Run 'docker COMMAND --help' for more information on a command.
+
+EOF
+}
+
+libexec=%LIBEXEC%
+subcommand=$1
+shift
+case $subcommand in \
+  run) exec $libexec/container.$subcommand "$@" ;;
+  images|ps|rm|stop) exec $libexec/docker.$subcommand "$@" ;;
+  *) usage ;;
+esac
+
