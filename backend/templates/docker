@@ -1,4 +1,7 @@
 #!/bin/bash
+# access command directly for users who are in docker group and root
+if [ $UID -eq 0 ] ; then exec /usr/bin/%NAME% "$@" ; fi
+egrep '^docker:.*:(.*,|)'"$USER"'(,|$)' /etc/group > /dev/null 2>&1 && exec /usr/bin/%NAME% "$@"
 
 usage () {
 cat << EOF
@@ -27,11 +30,11 @@ echo Not yet implemented: $*
 exit 1
 }
 
-backend=%BACKEND%
+libexec=%LIBEXEC%
 subcommand=$1
 shift
 case $subcommand in \
-  images|ps|rm|stop) exec $backend/docker.$subcommand "$@" ;;
+  images|ps|rm|stop) exec $libexec/docker.$subcommand "$@" ;;
   -*|'') usage ;;
   *) not_implemented $subcommand $* ;;
 esac

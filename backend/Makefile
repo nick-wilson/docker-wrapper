@@ -6,13 +6,11 @@ INSTALLGROUP=root
 
 SCRIPT=docker nvidia-docker
 LIBEXEC=$(PREFIX)/libexec/container
-# Backend will go in PATH when ready, until then put in LIBEXEC
-#BACKEND=$(PREFIX)/bin
-BACKEND=$(LIBEXEC)
+BACKEND=$(PREFIX)/bin
 
 default_target: $(SCRIPT)
 $(SCRIPT): templates/docker
-	sed -e s,%BACKEND%,$(BACKEND), templates/docker > $@
+	sed -e s,%BACKEND%,$(BACKEND), -e s,%LIBEXEC%,$(LIBEXEC), -e s,%NAME%,$@, templates/docker > $@
 
 .PHONY : install
 install: $(SCRIPT)

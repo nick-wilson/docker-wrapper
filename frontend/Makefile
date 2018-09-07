@@ -8,9 +8,7 @@ INSTALLGROUP=root
 SCRIPT=container
 HELPER=container.run
 LIBEXEC=$(PREFIX)/libexec/container
-# Backend will go in PATH when ready, until then put in LIBEXEC
-#BACKEND=$(PREFIX)/bin
-BACKEND=$(LIBEXEC)
+BACKEND=$(PREFIX)/bin
 
 default_target: $(SCRIPT) $(HELPER)
 $(SCRIPT) $(HELPER): templates/$@
