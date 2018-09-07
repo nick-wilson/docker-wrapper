@@ -22,6 +22,7 @@ EOF
 }
 
 libexec=%LIBEXEC%
+backend=%BACKEND%
 
 lustre=0
 ports=0

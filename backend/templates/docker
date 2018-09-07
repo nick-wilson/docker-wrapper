@@ -5,15 +5,14 @@ cat << EOF
 
 Usage: $0 COMMAND
 
-A front-end to the Docker command.
-Sets site-specific options and then calls relevant Docker command.
+A transparent front-end to the Docker command.
 Only a subset of functionality is currently implemented.
 
 Commands:
   images      List images
   ps          List containers
   rm          Remove one or more containers
-  run         Run a command in a new container
+  run         Run a command in a new container (not yet implemented)
   stop        Stop one or more running containers
 
 Run 'docker COMMAND --help' for more information on a command.
@@ -21,12 +20,18 @@ Run 'docker COMMAND --help' for more information on a command.
 EOF
 }
 
-libexec=%LIBEXEC%
+not_implemented(){
+usage
+echo
+echo Not yet implemented: $*
+exit 1
+}
+
 backend=%BACKEND%
 subcommand=$1
 shift
 case $subcommand in \
-  run) exec $libexec/container.$subcommand "$@" ;;
-  images|ps|rm|stop) exec $backend/docker $subcommand "$@" ;;
-  *) usage ;;
+  images|ps|rm|stop) exec $backend/docker.$subcommand "$@" ;;
+  -*|'') usage ;;
+  *) not_implemented $subcommand $* ;;
 esac
