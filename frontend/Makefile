@@ -8,7 +8,9 @@ INSTALLGROUP=root
 SCRIPT=container
 HELPER=container.run
 LIBEXEC=$(PREFIX)/libexec/container
-BACKEND=$(PREFIX)/bin
+# If wrapper is first in PATH then nvidia-docker calls docker wrapper which fails
+#BACKEND=$(PREFIX)/bin
+BACKEND=$(LIBEXEC)
 
 default_target: $(SCRIPT) $(HELPER)
 $(SCRIPT) $(HELPER): templates/$@
