@@ -4,16 +4,20 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <pwd.h>
 int main(int argc, char *argv[])
 {
    char uidstr[128];
-   char g1[128];
-   char g2[128];
-   char g3[128];
-   char g4[128];
-   char g5[128];
-   char g6[128];
-   char g7[128];
+   char gidstr0[128];
+   char gidstr1[128];
+   char gidstr2[128];
+   char gidstr3[128];
+   char gidstr4[128];
+   char gidstr5[128];
+   char gidstr6[128];
+   int j, ngroups;
+   gid_t *groups;
+   struct passwd *pw;
    int i;
    uid_t userid;
    char cont_name[128];
@@ -37,7 +41,7 @@ int main(int argc, char *argv[])
    /* put UID and GID of user calling command into format for argument for docker command */
    sprintf(uidstr,"%d:%d",getuid(),getgid());
 
-/* hack to fix group settings */
+   /* get list of supplementary groups */
 #include "groups.h"
 
    /* Container name used to track username and job ID and so that docker inspect used by Lustre will work */
@@ -46,13 +50,13 @@ int main(int argc, char *argv[])
 /* Run template docker command */
    execl("/usr/bin/nvidia-docker","nvidia-docker","run",
     "-u",uidstr,
-    "--group-add",g1,
-    "--group-add",g2,
-    "--group-add",g3,
-    "--group-add",g4,
-    "--group-add",g5,
-    "--group-add",g6,
-    "--group-add",g7,
+    "--group-add",gidstr0,
+    "--group-add",gidstr1,
+    "--group-add",gidstr2,
+    "--group-add",gidstr3,
+    "--group-add",gidstr4,
+    "--group-add",gidstr5,
+    "--group-add",gidstr6,
     "-v","/raid:/raid",
     "-v","/home:/home",
     "--rm","-i",
