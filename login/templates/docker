@@ -23,7 +23,7 @@ EOF
 
 docker_run(){
 if [ $# -eq 0 ] ; then usage ; echo No image specified ; exit 1 ; fi
-command="qsub -I -q fji -l walltime=2:00:00 -P41000001 -- /usr/local/bin/nscc-docker run $1"
+command="qsub -I -q fji -l walltime=2:00:00 -P41000001 -- /usr/local/bin/nscc-docker run --lustre -t $1"
 echo INFO: Submitting interactive job to PBS
 echo INFO: $command
 exec $command
