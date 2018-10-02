@@ -5,6 +5,7 @@ default_target: $(HELPERS)
 PREFIX=/usr/local
 INSTALLUSER=root
 INSTALLGROUP=root
+LOG=/var/log/container
 
 -include ../../config.mk
 
@@ -16,6 +17,7 @@ CFLAGS=
 install: $(HELPERS)
 	install -o $(INSTALLUSER) -g $(INSTALLGROUP) -m 0755 -d $(LIBEXEC)
 	install -o nobody -g docker -m 2755 -t $(LIBEXEC) $(HELPERS)
+	touch $(LOG) && chown root.docker $(LOG) && chmod 0660 $(LOG)
 
 .PHONY : clean
 clean:
