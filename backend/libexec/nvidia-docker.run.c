@@ -5,6 +5,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <pwd.h>
+#include <grp.h>
+#include <time.h>
 int main(int argc, char *argv[])
 {
    char uidstr[128];
@@ -21,6 +23,12 @@ int main(int argc, char *argv[])
    int i;
    uid_t userid;
    char cont_name[128];
+   FILE *LOGFILE;
+   time_t t;
+   struct tm *tmp;
+   char timestr[200];
+   char flags[10];
+   char hostname[1024];
 /*   clearenv();*/
    /* fail if image not specified */
    if (argc<2) {
@@ -46,6 +54,18 @@ int main(int argc, char *argv[])
 
    /* Container name used to track username and job ID and so that docker inspect used by Lustre will work */
    sprintf(cont_name,"--name=%s",argv[2]);
+
+  /* log details */
+#include "flags.h"
+  LOGFILE=fopen("/var/log/container","a");
+  if (LOGFILE!=NULL){
+    t=time(NULL);
+    tmp=localtime(&t);
+    strftime(timestr, sizeof(timestr),"%Y-%m-%d %H:%M:%S",tmp);
+    gethostname(hostname,sizeof(hostname));
+    fprintf(LOGFILE,"%s %s %s %s %s %s\n",timestr,hostname,pw->pw_name,argv[1],argv[2],flags);
+    fclose(LOGFILE);
+  }
 
 /* Run template docker command */
    execl("/usr/bin/nvidia-docker","nvidia-docker","run",

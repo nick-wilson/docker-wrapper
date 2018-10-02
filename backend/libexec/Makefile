@@ -48,99 +48,99 @@ nvidia-docker.run.lustre.init: nvidia-docker.run.lustre.init.c
 nvidia-docker.run.lustre.finish: nvidia-docker.run.lustre.finish.c
 	$(CC) $(CFLAGS) -o  $@ $< && strip $@
 
-nvidia-docker.run: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -o $@ $< && strip $@
 
-nvidia-docker.run.tty: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.tty: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_TTY -o $@ $< && strip $@
 
-nvidia-docker.run.net_host: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.net_host: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_NET_HOST -o $@ $< && strip $@
 
-nvidia-docker.run.net_host.tty: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.net_host.tty: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_NET_HOST -DUSE_TTY -o $@ $< && strip $@
 
-nvidia-docker.run.ports: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.ports: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_PORTS -o $@ $< && strip $@
 
-nvidia-docker.run.ports.tty: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.ports.tty: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_PORTS -DUSE_TTY -o $@ $< && strip $@
 
-nvidia-docker.run.ports.net_host: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.ports.net_host: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_PORTS -DUSE_NET_HOST -o $@ $< && strip $@
 
-nvidia-docker.run.ports.net_host.tty: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.ports.net_host.tty: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_PORTS -DUSE_NET_HOST -DUSE_TTY -o $@ $< && strip $@
 
-nvidia-docker.run.ipc_host: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.ipc_host: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_IPC_HOST -o $@ $< && strip $@
 
-nvidia-docker.run.ipc_host.tty: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.ipc_host.tty: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_IPC_HOST -DUSE_TTY -o $@ $< && strip $@
 
-nvidia-docker.run.ipc_host.net_host: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.ipc_host.net_host: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_IPC_HOST -DUSE_NET_HOST -o $@ $< && strip $@
 
-nvidia-docker.run.ipc_host.net_host.tty: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.ipc_host.net_host.tty: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_IPC_HOST -DUSE_NET_HOST -DUSE_TTY -o $@ $< && strip $@
 
-nvidia-docker.run.ipc_host.ports: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.ipc_host.ports: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_IPC_HOST -DUSE_PORTS -o $@ $< && strip $@
 
-nvidia-docker.run.ipc_host.ports.tty: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.ipc_host.ports.tty: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_IPC_HOST -DUSE_PORTS -DUSE_TTY -o $@ $< && strip $@
 
-nvidia-docker.run.ipc_host.ports.net_host: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.ipc_host.ports.net_host: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_IPC_HOST -DUSE_PORTS -DUSE_NET_HOST -o $@ $< && strip $@
 
-nvidia-docker.run.ipc_host.ports.net_host.tty: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.ipc_host.ports.net_host.tty: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_IPC_HOST -DUSE_PORTS -DUSE_NET_HOST -DUSE_TTY -o $@ $< && strip $@
 
-nvidia-docker.run.lustre: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.lustre: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_LUSTRE -o $@ $< && strip $@
 
-nvidia-docker.run.lustre.tty: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.lustre.tty: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_LUSTRE -DUSE_TTY -o $@ $< && strip $@
 
-nvidia-docker.run.lustre.net_host: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.lustre.net_host: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_LUSTRE -DUSE_NET_HOST -o $@ $< && strip $@
 
-nvidia-docker.run.lustre.net_host.tty: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.lustre.net_host.tty: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_LUSTRE -DUSE_NET_HOST -DUSE_TTY -o $@ $< && strip $@
 
-nvidia-docker.run.lustre.ports: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.lustre.ports: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_LUSTRE -DUSE_PORTS -o $@ $< && strip $@
 
-nvidia-docker.run.lustre.ports.tty: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.lustre.ports.tty: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_LUSTRE -DUSE_PORTS -DUSE_TTY -o $@ $< && strip $@
 
-nvidia-docker.run.lustre.ports.net_host: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.lustre.ports.net_host: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_LUSTRE -DUSE_PORTS -DUSE_NET_HOST -o $@ $< && strip $@
 
-nvidia-docker.run.lustre.ports.net_host.tty: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.lustre.ports.net_host.tty: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_LUSTRE -DUSE_PORTS -DUSE_NET_HOST -DUSE_TTY -o $@ $< && strip $@
 
-nvidia-docker.run.lustre.ipc_host: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.lustre.ipc_host: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_LUSTRE -DUSE_IPC_HOST -o $@ $< && strip $@
 
-nvidia-docker.run.lustre.ipc_host.tty: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.lustre.ipc_host.tty: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_LUSTRE -DUSE_IPC_HOST -DUSE_TTY -o $@ $< && strip $@
 
-nvidia-docker.run.lustre.ipc_host.net_host: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.lustre.ipc_host.net_host: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_LUSTRE -DUSE_IPC_HOST -DUSE_NET_HOST -o $@ $< && strip $@
 
-nvidia-docker.run.lustre.ipc_host.net_host.tty: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.lustre.ipc_host.net_host.tty: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_LUSTRE -DUSE_IPC_HOST -DUSE_NET_HOST -DUSE_TTY -o $@ $< && strip $@
 
-nvidia-docker.run.lustre.ipc_host.ports: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.lustre.ipc_host.ports: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_LUSTRE -DUSE_IPC_HOST -DUSE_PORTS -o $@ $< && strip $@
 
-nvidia-docker.run.lustre.ipc_host.ports.tty: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.lustre.ipc_host.ports.tty: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_LUSTRE -DUSE_IPC_HOST -DUSE_PORTS -DUSE_TTY -o $@ $< && strip $@
 
-nvidia-docker.run.lustre.ipc_host.ports.net_host: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.lustre.ipc_host.ports.net_host: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_LUSTRE -DUSE_IPC_HOST -DUSE_PORTS -DUSE_NET_HOST -o $@ $< && strip $@
 
-nvidia-docker.run.lustre.ipc_host.ports.net_host.tty: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run.lustre.ipc_host.ports.net_host.tty: nvidia-docker.run.c options.h groups.h flags.h
 	$(CC) $(CFLAGS)  -DUSE_LUSTRE -DUSE_IPC_HOST -DUSE_PORTS -DUSE_NET_HOST -DUSE_TTY -o $@ $< && strip $@
 

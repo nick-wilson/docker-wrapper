@@ -16,7 +16,7 @@ if [ $net_host -eq 1 ] ; then SUFFIX="${SUFFIX}.net_host" ; DEFS="$DEFS -DUSE_NE
 if [ $t -eq 1 ] ; then SUFFIX="${SUFFIX}.tty" ; DEFS="$DEFS -DUSE_TTY"  ; fi
 HELPERS="$HELPERS nvidia-docker.run${SUFFIX}"
 cat << EOF >> Makefile
-nvidia-docker.run${SUFFIX}: nvidia-docker.run.c options.h groups.h
+nvidia-docker.run${SUFFIX}: nvidia-docker.run.c options.h groups.h flags.h
 	\$(CC) \$(CFLAGS) $DEFS -o \$@ \$< && strip \$@
 
 EOF
