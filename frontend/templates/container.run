@@ -43,9 +43,11 @@ done
 
 if [ $# -ne 1 ] ; then echo ERROR: cannot parse command line ; usage ; exit 1 ; fi
 IMAGE=$1
-
-_x=`$libexec/docker.images | awk '{printf "%s:%s\n",$1,$2}' | grep "^${IMAGE}\$"`
-if [ x"$_x" != x"$IMAGE" ] ; then echo ERROR: image not found in repository: $IMAGE ; usage ; exit 1 ; fi
+tag="${IMAGE/*://}"
+latest=""
+if [ x"$tag" == x"$IMAGE" ] ; then latest=":latest" ; fi
+_x=`$libexec/docker.images | awk '{printf "%s:%s\n",$1,$2}' | grep "^${IMAGE}${latest}\$"`
+if [ x"$_x" != x"${IMAGE}${latest}" ] ; then echo ERROR: image not found in repository: $IMAGE ; usage ; exit 1 ; fi
 
 SUFFIX=""
 if [ $lustre -eq 1 ] ; then SUFFIX="${SUFFIX}.lustre" ; fi
