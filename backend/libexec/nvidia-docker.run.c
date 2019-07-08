@@ -68,7 +68,12 @@ int main(int argc, char *argv[])
   }
 
 /* Run template docker command */
+#ifndef __DOCKER_V1
+   execl("/usr/bin/docker","docker","run",
+    "--runtime=nvidia",
+#else
    execl("/usr/bin/nvidia-docker","nvidia-docker","run",
+#endif
     "-u",uidstr,
     "--group-add",gidstr0,
     "--group-add",gidstr1,
@@ -79,6 +84,8 @@ int main(int argc, char *argv[])
     "--group-add",gidstr6,
     "-v","/raid:/raid",
     "-v","/home:/home",
+    "-v","/var/run/etc.passwd:/etc/passwd",
+    "-v","/var/run/etc.group:/etc/group",
     "--rm","-i",
     cont_name,
 #include "options.h"
@@ -93,7 +100,7 @@ int main(int argc, char *argv[])
     "/bin/sh",
 #endif
     NULL);
-    perror("nvidia-docker command returned error");
+    perror("docker command returned error");
     exit(EXIT_FAILURE);
 }
 
