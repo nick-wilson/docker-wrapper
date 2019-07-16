@@ -10,13 +10,26 @@
 int main(int argc, char *argv[])
 {
    char uidstr[128];
-   char gidstr0[128];
-   char gidstr1[128];
-   char gidstr2[128];
-   char gidstr3[128];
-   char gidstr4[128];
-   char gidstr5[128];
-   char gidstr6[128];
+   char gidstr00[128];
+   char gidstr01[128];
+   char gidstr02[128];
+   char gidstr03[128];
+   char gidstr04[128];
+   char gidstr05[128];
+   char gidstr06[128];
+   char gidstr07[128];
+   char gidstr08[128];
+   char gidstr09[128];
+   char gidstr10[128];
+   char gidstr11[128];
+   char gidstr12[128];
+   char gidstr13[128];
+   char gidstr14[128];
+   char gidstr15[128];
+   char gidstr16[128];
+   char gidstr17[128];
+   char gidstr18[128];
+   char gidstr19[128];
    int j, ngroups;
    gid_t *groups;
    struct passwd *pw;
@@ -68,6 +81,7 @@ int main(int argc, char *argv[])
   }
 
 /* Run template docker command */
+#define __DOCKER_V1
 #ifndef __DOCKER_V1
    execl("/usr/bin/docker","docker","run",
     "--runtime=nvidia",
@@ -75,13 +89,26 @@ int main(int argc, char *argv[])
    execl("/usr/bin/nvidia-docker","nvidia-docker","run",
 #endif
     "-u",uidstr,
-    "--group-add",gidstr0,
-    "--group-add",gidstr1,
-    "--group-add",gidstr2,
-    "--group-add",gidstr3,
-    "--group-add",gidstr4,
-    "--group-add",gidstr5,
-    "--group-add",gidstr6,
+    "--group-add",gidstr00,
+    "--group-add",gidstr01,
+    "--group-add",gidstr02,
+    "--group-add",gidstr03,
+    "--group-add",gidstr04,
+    "--group-add",gidstr05,
+    "--group-add",gidstr06,
+    "--group-add",gidstr07,
+    "--group-add",gidstr08,
+    "--group-add",gidstr09,
+    "--group-add",gidstr10,
+    "--group-add",gidstr11,
+    "--group-add",gidstr12,
+    "--group-add",gidstr13,
+    "--group-add",gidstr14,
+    "--group-add",gidstr15,
+    "--group-add",gidstr16,
+    "--group-add",gidstr17,
+    "--group-add",gidstr18,
+    "--group-add",gidstr19,
     "-v","/raid:/raid",
     "-v","/home:/home",
     "-v","/var/run/etc.passwd:/etc/passwd",
