@@ -1,0 +1,3 @@
+TARGET=nscc-docker
+IMAGELIST=/app/nscc/log/nvidia-docker-images
+PREFIX_LOGIN=/app/pbs
