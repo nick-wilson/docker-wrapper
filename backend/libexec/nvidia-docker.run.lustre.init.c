@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
     argv[1],
     argv[3],
     "/ddn/scripts/init_lustre.sh",
+    "1",
     "o2ib0(ib1),o2ib1(ib1)",
     "192.168.156.29@o2ib,192.168.156.30@o2ib",
     "scratch",

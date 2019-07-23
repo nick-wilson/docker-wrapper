@@ -6,13 +6,15 @@ for lustre in 0 1 ; do
 for ipc_host in 0 1 ; do
 for ports in 0 1 ; do
 for net_host in 0 1 ; do
+for pid_host in 0 1 ; do
 for t in 0 1 ; do
 SUFFIX=""
 DEFS=""
 if [ $lustre -eq 1 ] ; then SUFFIX="${SUFFIX}.lustre" ; DEFS="$DEFS -DUSE_LUSTRE" ; fi
-if [ $ipc_host -eq 1 ] ; then SUFFIX="${SUFFIX}.ipc_host" ; DEFS="$DEFS -DUSE_IPC_HOST"  ; fi
 if [ $ports -eq 1 ] ; then SUFFIX="${SUFFIX}.ports" ; DEFS="$DEFS -DUSE_PORTS"  ; fi
+if [ $ipc_host -eq 1 ] ; then SUFFIX="${SUFFIX}.ipc_host" ; DEFS="$DEFS -DUSE_IPC_HOST"  ; fi
 if [ $net_host -eq 1 ] ; then SUFFIX="${SUFFIX}.net_host" ; DEFS="$DEFS -DUSE_NET_HOST"  ; fi
+if [ $pid_host -eq 1 ] ; then SUFFIX="${SUFFIX}.pid_host" ; DEFS="$DEFS -DUSE_PID_HOST"  ; fi
 if [ $t -eq 1 ] ; then SUFFIX="${SUFFIX}.tty" ; DEFS="$DEFS -DUSE_TTY"  ; fi
 HELPERS="$HELPERS nvidia-docker.run${SUFFIX}"
 cat << EOF >> Makefile
@@ -20,6 +22,7 @@ nvidia-docker.run${SUFFIX}: nvidia-docker.run.c options.h groups.h flags.h
 	\$(CC) \$(CFLAGS) $DEFS -o \$@ \$< && strip \$@
 
 EOF
+done
 done
 done
 done

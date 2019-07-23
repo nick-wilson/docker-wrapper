@@ -23,4 +23,9 @@ flags[4]='1';
 #else
 flags[4]='0';
 #endif
-flags[5]='\0';
+#ifdef USE_PID_HOST
+flags[5]='1';
+#else
+flags[5]='0';
+#endif
+flags[6]='\0';

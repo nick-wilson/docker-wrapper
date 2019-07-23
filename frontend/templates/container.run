@@ -8,6 +8,7 @@ Usage: %TARGET% run [--lustre] [--ports] [--ipc=host] [--net=host] [-t] IMAGE
   --ports      adds docker options -p8888:8888 -p5901:5901 ... -p5909:5909 -p6006:6006
   --ipc=host   adds docker option  --ipc=host
   --net=host   adds docker option  --net=host
+  --pid=host   adds docker option  --pid=host
   -t           adds docker option  -t
   -h           display this help and exit
   --help       display this help and exit
@@ -28,12 +29,16 @@ lustre=0
 ports=0
 ipc_host=0
 net_host=0
+pid_host=0
 t=0
 for i in `seq 1 $#` ; do
- if [ x"$1" == x"--lustre" ] ; then lustre=1 ; shift ; fi
- if [ x"$1" == x"--ipc=host" ] ; then ipc_host=1 ; shift ; fi
+ ###if [ x"$1" == x"--lustre" ] ; then lustre=1 ; shift ; fi
+ if [ x"$1" == x"--lustre" ] ; then net_host=1 ; shift ; fi
+ if [ x"$1" == x"--mount-lustre" ] ; then lustre=1 ; shift ; fi
  if [ x"$1" == x"--ports" ] ; then ports=1 ; shift ; fi
+ if [ x"$1" == x"--ipc=host" ] ; then ipc_host=1 ; shift ; fi
  if [ x"$1" == x"--net=host" ] ; then net_host=1 ; shift ; fi
+ if [ x"$1" == x"--pid=host" ] ; then pid_host=1 ; shift ; fi
  if [ x"$1" == x"-t" ] ; then t=1 ; shift ; fi
  #
  if [ x"$1" == x"-h" ] ; then usage ; exit ; fi
@@ -51,18 +56,30 @@ if [ x"$_x" != x"${IMAGE}${latest}" ] ; then echo ERROR: image not found in repo
 
 SUFFIX=""
 if [ $lustre -eq 1 ] ; then SUFFIX="${SUFFIX}.lustre" ; fi
-if [ $ipc_host -eq 1 ] ; then SUFFIX="${SUFFIX}.ipc_host" ; fi
 if [ $ports -eq 1 ] ; then SUFFIX="${SUFFIX}.ports" ; fi
+if [ $ipc_host -eq 1 ] ; then SUFFIX="${SUFFIX}.ipc_host" ; fi
 if [ $net_host -eq 1 ] ; then SUFFIX="${SUFFIX}.net_host" ; fi
+if [ $pid_host -eq 1 ] ; then SUFFIX="${SUFFIX}.pid_host" ; fi
 if [ $t -eq 1 ] ; then SUFFIX="${SUFFIX}.tty" ; fi
 
 _cgroup="$PBS_JOBID"
 if [ x"$_cgroup" == x ] ; then _cgroup=$(grep "$$" /sys/fs/cgroup/devices/*/tasks | awk -F / '{printf "%s",$6}')  ; fi
 if [ x"$_cgroup" == x ] ; then _cgroup="Interactive"  ; fi
 
+ngpu=`nvidia-smi -L | grep "UUID: GPU-" | wc -l`
+NVIDIA_VISIBLE_DEVICES="none"
+if [ $ngpu -eq 0 ] ; then
+ NVIDIA_VISIBLE_DEVICES="none"
+elif [ $ngpu -eq 8 ] ; then
+ NVIDIA_VISIBLE_DEVICES="all"
+else
+ NVIDIA_VISIBLE_DEVICES=`nvidia-smi -L  | awk '{printf "%s,",$NF}' | sed -e 's/)//g' -e 's/,$//'`
+fi
+
+
 CONTAINER="${USER}-${_cgroup}-`date +%Y%m%d%H%M%S%N`-${RANDOM}"
 if [ $lustre -eq 0 ] ; then
- exec $libexec/nvidia-docker.run$SUFFIX $IMAGE $CONTAINER
+ exec $libexec/nvidia-docker.run$SUFFIX $IMAGE $CONTAINER $NVIDIA_VISIBLE_DEVICES
 else
 
 VOLUME="DDN-Lustre-vol"
@@ -102,7 +119,7 @@ ENTRYPOINT="${ENTRYPOINT% }"
 lustre_containers &
 # nvidia-docker run $DOCKER_OPTS $IMAGE $ENTRYPOINT_ACTION $CMD_ACTION $JO
 # nvidia-docker run ... -u $UID:$GID --group-add 41000001 -v /home:/home --rm -i ... -v DDN-Lustre-vol:/ddn --entrypoint=/ddn/scripts/entry_lustre.sh --net=host --name=$CONTAINER $IMAGE /usr/local/bin/nvidia_entrypoint.sh
-$libexec/nvidia-docker.run$SUFFIX $IMAGE $CONTAINER $ENTRYPOINT
+$libexec/nvidia-docker.run$SUFFIX $IMAGE $CONTAINER $NVIDIA_VISIBLE_DEVICES $ENTRYPOINT
 jobs
 wait
 

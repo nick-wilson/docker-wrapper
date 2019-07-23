@@ -44,3 +44,12 @@
            sprintf(gidstr17,"%d",groups[17]);
            sprintf(gidstr18,"%d",groups[18]);
            sprintf(gidstr19,"%d",groups[19]);
+/*
+           printf("%d\n", groups[0]);
+           printf("%d\n", groups[1]);
+           printf("%d\n", groups[2]);
+           printf("%d\n", groups[3]);
+           printf("%d\n", groups[4]);
+           printf("%d\n", groups[5]);
+           printf("%d\n", groups[6]);
+*/

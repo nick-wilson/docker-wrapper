@@ -23,3 +23,6 @@
 #ifdef USE_TTY
     "-t",
 #endif
+#ifdef USE_PID_HOST
+    "--pid=host",
+#endif

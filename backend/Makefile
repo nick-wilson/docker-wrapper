@@ -4,7 +4,7 @@ INSTALLGROUP=root
 
 -include ../config.mk
 
-SCRIPT=docker nvidia-docker
+SCRIPT=docker
 LIBEXEC=$(PREFIX)/libexec/container
 # If wrapper is first in PATH then nvidia-docker calls docker wrapper which fails
 #BACKEND=$(PREFIX)/bin

@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
    int i;
    uid_t userid;
    char cont_name[128];
+   char nvidia_devices[1024];
    FILE *LOGFILE;
    time_t t;
    struct tm *tmp;
@@ -52,8 +53,12 @@ int main(int argc, char *argv[])
     puts("Container name not specified");
     exit(1);
    }
-#ifdef USE_LUSTRE
    if (argc<4) {
+    puts("Devices not specified");
+    exit(1);
+   }
+#ifdef USE_LUSTRE
+   if (argc<5) {
     puts("Entrypoint not specified");
     exit(1);
    }
@@ -68,6 +73,9 @@ int main(int argc, char *argv[])
    /* Container name used to track username and job ID and so that docker inspect used by Lustre will work */
    sprintf(cont_name,"--name=%s",argv[2]);
 
+   /* Pass visible devices to Docker so they match inside and outside container */
+   sprintf(nvidia_devices,"NVIDIA_VISIBLE_DEVICES=%s",argv[3]);
+
   /* log details */
 #include "flags.h"
   LOGFILE=fopen("/var/log/container","a");
@@ -81,13 +89,9 @@ int main(int argc, char *argv[])
   }
 
 /* Run template docker command */
-#define __DOCKER_V1
-#ifndef __DOCKER_V1
    execl("/usr/bin/docker","docker","run",
     "--runtime=nvidia",
-#else
-   execl("/usr/bin/nvidia-docker","nvidia-docker","run",
-#endif
+    "-e",nvidia_devices,
     "-u",uidstr,
     "--group-add",gidstr00,
     "--group-add",gidstr01,
@@ -111,20 +115,24 @@ int main(int argc, char *argv[])
     "--group-add",gidstr19,
     "-v","/raid:/raid",
     "-v","/home:/home",
+#ifndef USE_LUSTRE
+    "-v","/scratch:/scratch",
+#endif
     "-v","/var/run/etc.passwd:/etc/passwd",
     "-v","/var/run/etc.group:/etc/group",
     "--rm","-i",
     cont_name,
 #include "options.h"
 #ifdef USE_LUSTRE
-    "-v","DDN-Lustre-vol:/ddn",
+    "-v","DDN-Lustre-vol:/ddn:ro",
+    "--device=/dev/lnet:/dev/lnet",
     "--entrypoint=/ddn/scripts/entry_lustre.sh",
     "--net=host",
     argv[1],
-    argv[3],
+    "1",
+    argv[4],
 #else
     argv[1],
-    "/bin/sh",
 #endif
     NULL);
     perror("docker command returned error");
@@ -132,10 +140,8 @@ int main(int argc, char *argv[])
 }
 
 /* TODO */
-/* 1. Secondary groups with --group-add */
+/* 1. Improve secondary groups to allow arbitrary number */
 /* 2. Perform input validation */
 /* 3. Allow user to set other parameters (--shm-size etc.) */
 /* 4. Allow user to specify command to run rather than /bin/sh */
 /* 5. Only use docker volumes for user's $HOME and project directories rather than mount all of home */
-/* 6. logging who, when, what */
-/* 7. export HOME, USER, LOGNAME and other environment variables */
