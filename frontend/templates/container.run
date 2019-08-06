@@ -3,21 +3,21 @@
 usage () {
 cat << EOF
 
-Usage: %TARGET% run [--lustre] [--ports] [--ipc=host] [--net=host] [-t] IMAGE
-  --lustre     mounts /scratch (also turns on --net=host)
-  --ports      adds docker options -p8888:8888 -p5901:5901 ... -p5909:5909 -p6006:6006
-  --ipc=host   adds docker option  --ipc=host
-  --net=host   adds docker option  --net=host
-  --pid=host   adds docker option  --pid=host
-  -t           adds docker option  -t
+Usage: %TARGET% run [--net=host] [--ipc=host] [--pid=host] [-t] [-h] IMAGE
+  --net=host   adds docker option --net=host
+  --ipc=host   adds docker option --ipc=host
+  --pid=host   adds docker option --pid=host
+  -t           adds docker option -t
   -h           display this help and exit
   --help       display this help and exit
   --usage      display this help and exit
+  --lustre     deprecated, turns on --net=host for backwards compatibility
+  --ports      adds docker options -p8888:8888 -p5901:5901 ... -p5909:5909 -p6006:6006
 
 The following options are added to the docker command by default:
-	-u \$UID:\$GID --group-add \$GIDS –v /home:/home --rm –i --ulimit memlock=-1 --ulimit stack=67108864
+        -u \$UID:\$GID --group-add \$GIDS –v /home:/home -v /raid:/raid -v /scratch:/scratch --rm –i --ulimit memlock=-1 --ulimit stack=67108864
 If --ipc=host is not specified then the following option is also added:
-	--shm-size=1g
+        --shm-size=1g
 
 EOF
 }
