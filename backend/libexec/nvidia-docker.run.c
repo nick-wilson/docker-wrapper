@@ -120,6 +120,7 @@ int main(int argc, char *argv[])
 #endif
     "-v","/var/run/etc.passwd:/etc/passwd",
     "-v","/var/run/etc.group:/etc/group",
+    "-v","/etc/localtime:/etc/localtime",
     "--rm","-i",
     cont_name,
 #include "options.h"
