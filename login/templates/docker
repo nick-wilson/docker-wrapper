@@ -23,14 +23,16 @@ EOF
 
 docker_run(){
 if [ $# -eq 0 ] ; then usage ; echo No image specified ; exit 1 ; fi
-command="qsub -I -q fji -l walltime=2:00:00 -P41000001 -- /usr/local/bin/nscc-docker run --lustre -t $1"
+# submit an interactive PBS job which runs container and gives a tty
+command="qsub -I -q dgx-dev -l walltime=2:00:00 -- /usr/local/bin/nscc-docker run -t $1"
 echo INFO: Submitting interactive job to PBS
 echo INFO: $command
 exec $command
 }
 
 docker_images(){
-exec cat /app/nscc/log/nvidia-docker-images
+file="/var/run/docker-images"
+tty > /dev/null 2>&1 && less "$file" || cat "$file"
 }
 
 subcommand=$1
