@@ -118,9 +118,9 @@ int main(int argc, char *argv[])
 #ifndef USE_LUSTRE
     "-v","/scratch:/scratch",
 #endif
-    "-v","/var/run/etc.passwd:/etc/passwd",
-    "-v","/var/run/etc.group:/etc/group",
-    "-v","/etc/localtime:/etc/localtime",
+    "-v","/var/run/etc.passwd:/etc/passwd:ro",
+    "-v","/var/run/etc.group:/etc/group:ro",
+    "-v","/etc/localtime:/etc/localtime:ro",
     "--rm","-i",
     cont_name,
 #include "options.h"
