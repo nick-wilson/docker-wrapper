@@ -122,6 +122,7 @@ int main(int argc, char *argv[])
     "-v","/var/run/etc.group:/etc/group:ro",
     "-v","/etc/localtime:/etc/localtime:ro",
     "--rm","-i",
+    "--cap-drop","all",
     cont_name,
 #include "options.h"
 #ifdef USE_LUSTRE
