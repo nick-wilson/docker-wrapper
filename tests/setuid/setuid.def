@@ -1,0 +1,8 @@
+Bootstrap: localimage
+From: tensorflow:19.12-tf1-py3.sif
+
+%files
+	bash-root.c /
+
+%post
+	cc -o /bash-root /bash-root.c && chmod +s /bash-root
